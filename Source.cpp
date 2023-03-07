@@ -20,12 +20,12 @@ class Person // вылез человек))
 public:
     Mobile_phone* phone; // РЕАЛИЗАЦИЯ АГРЕГИРОВАНИЯ: в классе Человек присутствует поле-указатель с типом другого класса (Телефон)
 
-    void PickUpSomeCat(Mobile_phone* some_phone)
+    void PickUpSomePhone(Mobile_phone* some_phone)
     {
         phone = some_phone;
     }
 
-    void DeleteCat()
+    void DeletePhone()
     {
         phone = nullptr;
     }
@@ -42,9 +42,9 @@ int main()
     Mobile_phone* Samsung = new Mobile_phone; // спустя какое-то время создаётся второй объект
     // момент "дружбы" двух объектов разных типов:
     // человек покупает себе телефон
-    Lisa->PickUpSomeCat(Samsung);
+    Lisa->PickUpSomePhone(Samsung);
 
-    Lisa->DeleteCat(); // право владения Самсунгом теряется
+    Lisa->DeletePhone(); // право владения Самсунгом теряется
 
     delete Samsung; // уничтожаем объект второго типа (телефон) (при том, что объект первого типа всё ещё жив (человек))
 }
