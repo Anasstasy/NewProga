@@ -4,95 +4,160 @@
 
 using namespace std;
 
-//ДЗ:
-//1) придумать 3 ситуации с агрегированием
-//например : Библиотека - Книги, Швабра - Тряпка, Дипломат - Документы
-
-
-class Mobile_phone // первый тип
-{
+class Device {
 public:
-    string brand; // у телефона есть марка
+    Device(const string& manufacturer, const string& model, int quantity, double price, const string& color)
+        : manufacturer_(manufacturer), model_(model), quantity_(quantity), price_(price), color_(color) {}
+
+    virtual ~Device() {}
+
+    virtual void print() const {
+        cout << "Manufacturer: " << manufacturer_ << endl;
+        cout << "Model: " << model_ << endl;
+        cout << "Quantity: " << quantity_ << endl;
+        cout << "Price: " << price_ << endl;
+        cout << "Color: " << color_ << endl;
+    }
+
+    const string& getManufacturer() const {
+        return manufacturer_;
+    }
+
+    const string& getModel() const {
+        return model_;
+    }
+
+    int getQuantity() const {
+        return quantity_;
+    }
+
+    double getPrice() const {
+        return price_;
+    }
+
+    const string& getColor() const {
+        return color_;
+    }
+
+private:
+    string manufacturer_;
+    string model_;
+    int quantity_;
+    double price_;
+    string color_;
 };
 
-class Person // вылез человек))
-{
+class MobilePhone : public Device {
 public:
-    Mobile_phone* phone; // РЕАЛИЗАЦИЯ АГРЕГИРОВАНИЯ: в классе Человек присутствует поле-указатель с типом другого класса (Телефон)
+    MobilePhone(const string& manufacturer, const string& model, int quantity, double price, const string& color, const string& os)
+        : Device(manufacturer, model, quantity, price, color), os_(os) {}
 
-    void PickUpSomePhone(Mobile_phone* some_phone)
-    {
-        phone = some_phone;
+    void print() const override {
+        Device::print();
+        cout << "OS: " << os_ << endl;
     }
 
-    void DeletePhone()
-    {
-        phone = nullptr;
+    const string& getOs() const {
+        return os_;
     }
+
+private:
+    string os_;
 };
 
-int main()
-{
-    setlocale(LC_ALL, "ru");
+class Laptop : public Device {
+public:
+    Laptop(const string& manufacturer, const string& model, int quantity, double price, const string& color, int ram)
+        : Device(manufacturer, model, quantity, price, color), ram_(ram) {}
 
-    Person* Lisa = new Person; // сначала создаётся первый объект
-    // ...
-    // ...
-    // ...
-    Mobile_phone* Samsung = new Mobile_phone; // спустя какое-то время создаётся второй объект
-    // момент "дружбы" двух объектов разных типов:
-    // человек покупает себе телефон
-    Lisa->PickUpSomePhone(Samsung);
-
-    Lisa->DeletePhone(); // право владения Самсунгом теряется
-
-    delete Samsung; // уничтожаем объект второго типа (телефон) (при том, что объект первого типа всё ещё жив (человек))
-}
-
-
-/*     Пример на Библиотека - Книги
-
-// Определение структуры, содержащей информацию о книге
-struct Book 
-{
-    string title;
-    string author;
-    int pages;
-};
-
-// Определение структуры, содержащей информацию о библиотеке
-struct Library 
-{
-    string name;
-    vector<Book> books; // Вектор книг в библиотеке
-    int num_books() const 
-    {
-        return books.size(); // Метод, возвращающий количество книг в библиотеке
+    void print() const override {
+        Device::print();
+        cout << "RAM: " << ram_ << " GB" << endl;
     }
+
+    int getRam() const {
+        return ram_;
+    }
+
+private:
+    int ram_;
 };
 
-int main() 
-{
-    setlocale(LC_ALL, "ru");
-    // Создание объекта библиотеки и добавление книг
-    Library my_library;
-    my_library.name = "Моя библиотека";
-    my_library.books.push_back({ "Стеклянный трон", "Сара Дж. Маас", 344 });
-    my_library.books.push_back({ "Гордость и предубеждение", "Джейн Остин", 251 });
-    my_library.books.push_back({ "Гипотеза любви", "Али Хейзелвуд", 416 });
-    my_library.books.push_back({ "Королевство шипов и роз", "Сара Дж. Маас", 277 });
-    my_library.books.push_back({ "Жестокий принц", "Холли Блэк", 371 });
-    my_library.books.push_back({ "Караваль", "Стефани Гарбер", 383 });
+class Tablet : public Device {
+public:
+    Tablet(const string& manufacturer, const string& model, int quantity, double price, const string& color, const string& size)
+        : Device(manufacturer, model, quantity, price, color), size_(size) {}
 
-    // Использование метода для получения количества книг в библиотеке
-    int num_books = my_library.num_books();
+    void print() const override {
+        Device::print();
+        cout << "Size: " << size_ << endl;
+    }
 
-    // Вывод результата
-    cout << my_library.name << " содержит " << num_books << " книг." << endl;
+    const string& getSize() const {
+        return size_;
+    }
+
+private:
+    string size_;
+};
+
+int main() {
+    vector<Device*> devices;
+
+    // add devices to the list
+    devices.push_back(new MobilePhone("Apple", "iPhone 13", 10, 999.99, "Blue", "iOS"));
+    devices.push_back(new MobilePhone("Samsung", "Galaxy S21", 5, 799.99, "Black", "Android"));
+    devices.push_back(new Laptop("Dell", "XPS 13", 3, 1499.99, "Silver", 16));
+    devices.push_back(new Laptop("Apple", "MacBook Pro", 7, 1999.99, "Space Gray", 32));
+    devices.push_back(new Tablet("Samsung", "Galaxy Tab S7", 8, 599.99, "Mystic Silver", "11 inches"));
+    devices.push_back(new Tablet("Apple", "iPad Pro", 6, 799.99, "Silver", "12.9 inches"));
+
+    // print the list of devices
+    cout << "List of Devices:" << endl;
+    for (Device* device : devices) {
+        device->print();
+        cout << endl;
+    }
+
+    // remove devices from the list based on a given criterion
+    string manufacturer_to_remove = "Apple";
+    auto it = devices.begin();
+    while (it != devices.end()) {
+        if ((*it)->getManufacturer() == manufacturer_to_remove) {
+            delete* it;
+            it = devices.erase(it);
+        }
+        else {
+            ++it;
+        }
+    }
+
+    // print the updated list of devices
+    cout << "List of Devices (after removing " << manufacturer_to_remove << "):" << endl;
+    for (Device* device : devices) {
+        device->print();
+        cout << endl;
+    }
+
+    // search for devices based on a given criterion
+    string model_to_find = "Galaxy S21";
+    bool found_device = false;
+    for (Device* device : devices) {
+        if (device->getModel() == model_to_find) {
+            cout << "Found device:" << endl;
+            device->print();
+            found_device = true;
+            break;
+        }
+    }
+    if (!found_device) {
+        cout << "Device not found." << endl;
+    }
+
+    // free memory allocated for devices
+    for (Device* device : devices) {
+        delete device;
+    }
+
     return 0;
-}*/
-
-
-
-
-
+}
