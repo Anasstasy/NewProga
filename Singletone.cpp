@@ -9,7 +9,7 @@ class FileWorker
 public:
     static FileWorker& getInstance()
     {
-        static FileWorker instance; // единственный экземпляр класса
+        static FileWorker instance; // РµРґРёРЅСЃС‚РІРµРЅРЅС‹Р№ СЌРєР·РµРјРїР»СЏСЂ РєР»Р°СЃСЃР°
         return instance;
     }
 
@@ -66,28 +66,28 @@ public:
     }
 
 private:
-    FileWorker() {} // закрытый конструктор
+    FileWorker() {} // Р·Р°РєСЂС‹С‚С‹Р№ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ
 
-    FileWorker(const FileWorker&) = delete; // запрет копирования
-    FileWorker& operator=(const FileWorker&) = delete; // запрет присваивания
+    FileWorker(const FileWorker&) = delete; // Р·Р°РїСЂРµС‚ РєРѕРїРёСЂРѕРІР°РЅРёСЏ
+    FileWorker& operator=(const FileWorker&) = delete; // Р·Р°РїСЂРµС‚ РїСЂРёСЃРІР°РёРІР°РЅРёСЏ
 
-    ~FileWorker() {} // деструктор
+    ~FileWorker() {} // РґРµСЃС‚СЂСѓРєС‚РѕСЂ
 
 };
 
 int main()
 {
-    // получение экземпляра FileWorker
+    // РїРѕР»СѓС‡РµРЅРёРµ СЌРєР·РµРјРїР»СЏСЂР° FileWorker
     FileWorker& fileWorker = FileWorker::getInstance();
 
-    // использование методов FileWorker
+    // РёСЃРїРѕР»СЊР·РѕРІР°РЅРёРµ РјРµС‚РѕРґРѕРІ FileWorker
     fileWorker.createFile("Testik.txt");
     fileWorker.renameFile("Testik.txt", "new_test.txt");
     fileWorker.deleteFile("new_test.txt");
     cout << boolalpha << fileWorker.fileExists("new_test.txt") << endl; // false
 
-    // попытка создания второго экземпляра
-    //FileWorker secondFileWorker; // ошибка компиляции
+    // РїРѕРїС‹С‚РєР° СЃРѕР·РґР°РЅРёСЏ РІС‚РѕСЂРѕРіРѕ СЌРєР·РµРјРїР»СЏСЂР°
+    //FileWorker secondFileWorker; // РѕС€РёР±РєР° РєРѕРјРїРёР»СЏС†РёРё
 
     return 0;
 }
