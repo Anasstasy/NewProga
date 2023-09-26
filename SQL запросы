@@ -61,7 +61,7 @@ BEGIN
   SET @current = @current + 1
 END
 
-PRINT LEFT(@result, LEN(@result)
+PRINT LEFT(@result, LEN(@result) - 2)
 
 
 
@@ -73,7 +73,7 @@ DECLARE @L INT = 30
 
 DECLARE @Line NVARCHAR(MAX) = REPLICATE('*', @L)
 
-PRINT @Line;
+PRINT @Line
 
 
 
