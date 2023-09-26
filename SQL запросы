@@ -1,0 +1,80 @@
+3)показать номера всех счастливых трамвайных билетов. номер считается счастливым,
+если сумма его первых трёх цифр совпадает с суммой последних трёх цифр. перебрать
+номера от 000000 до 999999.
+CREATE TABLE #LuckyTickets (TicketNumber INT)
+
+DECLARE @TicketNumber INT = 0
+WHILE @TicketNumber <= 999999
+BEGIN
+    DECLARE @Digits NVARCHAR(6) = RIGHT('000000' + CAST(@TicketNumber AS NVARCHAR(6)), 6)
+
+    DECLARE @SumFirstThree INT =
+        CAST(SUBSTRING(@Digits, 1, 1) AS INT) +
+        CAST(SUBSTRING(@Digits, 2, 1) AS INT) +
+        CAST(SUBSTRING(@Digits, 3, 1) AS INT)
+
+    DECLARE @SumLastThree INT =
+        CAST(SUBSTRING(@Digits, 4, 1) AS INT) +
+        CAST(SUBSTRING(@Digits, 5, 1) AS INT) +
+        CAST(SUBSTRING(@Digits, 6, 1) AS INT)
+
+    IF @SumFirstThree = @SumLastThree
+    BEGIN
+        INSERT INTO #LuckyTickets (TicketNumber) VALUES (@TicketNumber)
+    END
+
+    SET @TicketNumber = @TicketNumber + 1
+END
+
+SELECT TicketNumber FROM #LuckyTickets
+DROP TABLE #LuckyTickets
+
+
+2)показать все простые целые числа от 3 до 1000000. число называется простьм, если
+оно делится без остатка ТОЛЬКО на 1 и само на себя.
+DECLARE @start INT = 3
+DECLARE @finish INT = 1000000
+DECLARE @current INT = @start
+DECLARE @result NVARCHAR(500) = ''
+
+WHILE @current <= @finish
+BEGIN
+  DECLARE @IsPrime BIT = 1
+  DECLARE @Divisor INT = 2
+
+  WHILE @Divisor * @Divisor <= @current
+  BEGIN
+    IF @current % @Divisor = 0
+    BEGIN
+      SET @IsPrime = 0
+      BREAK
+    END
+
+    SET @Divisor = @Divisor + 1
+  END
+
+  IF @IsPrime = 1
+  BEGIN
+    SET @result += CAST(@current AS NVARCHAR) + ', '
+  END
+
+  SET @current = @current + 1
+END
+
+PRINT LEFT(@result, LEN(@result)
+
+
+
+1)Написать скрипт на языке Transact-SQl, который покажет
+горизонтальную линию из звёздочек длиной @L.
+например, если переменная @L = 30, то результатом будет
+******************************
+DECLARE @L INT = 30
+
+DECLARE @Line NVARCHAR(MAX) = REPLICATE('*', @L)
+
+PRINT @Line;
+
+
+
+
