@@ -1,0 +1,37 @@
+DECLARE @WordCount TABLE (Word nvarchar(50), Count INT)
+DECLARE @Message nvarchar(MAX)
+DECLARE message_cursor CURSOR FOR
+SELECT mess
+FROM messages
+OPEN message_cursor
+FETCH NEXT FROM message_cursor into @Message
+
+WHILE @@FETCH_STATUS = 0
+BEGIN
+    DECLARE @Begin int = 1
+    DECLARE @End int
+    DECLARE @Word nvarchar(50)
+
+    WHILE @Begin <= LEN(@Message)
+    BEGIN
+        SET @End = CHARINDEX(' ', @Message, @Begin)
+
+        if @End = 0
+            SET @End = LEN(@Message) + 1
+        SET @Word = SUBSTRING(@Message, @Begin, @End - @Begin)
+        if @Word <> ''
+        BEGIN
+            INSERT INTO @WordCount (Word, Count)
+            VALUES (@Word, 1)
+        END
+        SET @Begin = @End + 1
+    END
+    FETCH NEXT FROM message_cursor INTO @Message
+END
+
+CLOSE message_cursor
+DEALLOCATE message_cursor
+SELECT TOP 50 Word, SUM(Count) AS TotalCount
+FROM @WordCount
+GROUP BY Word
+ORDER BY TotalCount DESC
