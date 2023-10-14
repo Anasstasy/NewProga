@@ -1,0 +1,71 @@
+USE [Library]
+DECLARE @table TABLE (
+    id INT,
+    first_name VARCHAR(200),
+    last_name VARCHAR(200),
+    role VARCHAR(200), 
+    department VARCHAR(200),
+    birthday DATE,
+    course_mark INT
+)
+
+INSERT INTO @table (first_name, last_name, role, department)
+SELECT
+   Teacher.first_name, Teacher.last_name, 'преподаватель' AS role, Department.name AS department
+FROM
+   Department
+INNER JOIN Teacher ON Department.id = Teacher.id_department
+WHERE Department.id = 2 
+UNION ALL
+SELECT
+   Student.first_name, Student.last_name, 'студент' AS role, Department.name AS department
+FROM Student JOIN [Group]
+ON dbo.Student.id_group = dbo.[Group].id
+JOIN Department ON Department.id = [Group].id_department 
+WHERE
+    dbo.[Group].id_department = 2
+
+UPDATE @table
+SET birthday = DATEADD(DAY, ABS(CHECKSUM(NEWID())) % 3650, '2010-01-01')
+UPDATE @table
+SET course_mark = CASE 
+    WHEN role = 'студент' AND MONTH(birthday) = 10 AND DAY(birthday) = 10 THEN 12
+    ELSE ABS(CHECKSUM(NEWID())) % 10 + 1 
+END
+DECLARE cur CURSOR FOR 
+SELECT id, first_name, last_name, role, department, birthday, course_mark FROM @table
+
+DECLARE @id INT
+DECLARE @first_name VARCHAR(200)
+DECLARE @last_name VARCHAR(200)
+DECLARE @role VARCHAR(200)
+DECLARE @department VARCHAR(200)
+DECLARE @birthday DATE
+DECLARE @course_mark INT
+
+OPEN cur
+
+FETCH NEXT FROM cur INTO @id, @first_name, @last_name, @role, @department, @birthday, @course_mark
+
+WHILE @@FETCH_STATUS = 0 
+BEGIN
+
+    PRINT  ' имя: ' + @first_name + ' ' + @last_name + ', роль: ' + @role + ', кафедра: ' + @department + ', день рождения: ' + CONVERT(VARCHAR, @birthday, 104) + ', оценка за курсовую: ' + CAST(@course_mark AS VARCHAR) 
+
+    IF @department = 'Компьютерной графики и дизайна'
+    BEGIN
+
+        PRINT 'Отправить приглашение на защиту курсовых работ которые состоятся 10 октября в 12 ноль ноль'
+
+        IF @role = 'студент' AND MONTH(@birthday) = 10 AND DAY(@birthday) = 10 
+        BEGIN
+
+            PRINT 'Поздравляем! Вы получили за курсовую работу 12 автоматом!'
+        END
+    END
+    FETCH NEXT FROM cur INTO @id, @first_name, @last_name, @role, @department, @birthday, @course_mark
+
+END
+CLOSE cur
+
+DEALLOCATE cur
