@@ -1,0 +1,17 @@
+CREATE TRIGGER check_books ON S_Cards
+AFTER INSERT
+AS
+BEGIN
+    DECLARE @student_id INT
+    SELECT @student_id = id_student FROM inserted
+
+    DECLARE @book_count INT
+    SELECT @book_count = COUNT(*) FROM S_Cards
+    WHERE id_student = @student_id AND date_in IS NULL
+
+    IF @book_count > 3
+    BEGIN
+        PRINT 'Вы уже взяли 3 книги и не вернули, поэтому, пока хотя бы одна из них не будет возвращена - новые книги не выдаются.'
+        ROLLBACK
+    END
+END
