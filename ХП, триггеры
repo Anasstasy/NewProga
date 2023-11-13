@@ -1,0 +1,64 @@
+1) CREATE PROCEDURE show_books
+ @author_name VARCHAR(50),
+ @author_surname VARCHAR(50),
+ @theme VARCHAR(50),
+ @category VARCHAR(50),
+ @sort_field INT,
+ @sort_order VARCHAR(4)
+AS
+BEGIN
+ DECLARE @sql NVARCHAR(MAX);
+ DECLARE @params NVARCHAR(MAX);
+ SET @sql = 'SELECT b.name, a.first_name, a.last_name, b.id_theme, b.id_category
+ FROM Book b
+ JOIN Author a ON b.id_author = a.id
+ WHERE 1 = 1';
+
+ IF @author_name IS NOT NULL
+    SET @sql = @sql + ' AND a.first_name = @author_name';
+
+ IF @author_surname IS NOT NULL
+    SET @sql = @sql + ' AND a.last_name = @author_surname';
+
+ IF @theme IS NOT NULL
+    SET @sql = @sql + ' AND b.id_theme = @theme';
+
+ IF @category IS NOT NULL
+    SET @sql = @sql + ' AND b.id_category = @category';
+
+ SET @sql = @sql + ' ORDER BY ';
+
+ SET @sql = @sql + 
+    CASE @sort_field
+        WHEN 1 THEN 'b.name'
+        WHEN 2 THEN 'a.first_name'
+        WHEN 3 THEN 'a.last_name'
+        WHEN 4 THEN 'b.id_theme'
+        WHEN 5 THEN 'b.id_category'
+        ELSE 'b.name'
+    END;
+
+ SET @sql = @sql + ' ' + @sort_order;
+
+ SET @params = N'@author_name VARCHAR(50),
+    @author_surname VARCHAR(50),
+    @theme VARCHAR(50),
+    @category VARCHAR(50)';
+
+ EXEC sp_executesql @sql, @params, 
+    @author_name, @author_surname, 
+    @theme, @category;
+END
+
+
+2) CREATE PROCEDURE count_books
+AS
+BEGIN
+ DECLARE @teacher_count INT;
+ DECLARE @student_count INT;
+ SELECT @teacher_count = COUNT(*) FROM T_Cards
+ WHERE date_out IS NULL;
+ SELECT @student_count = COUNT(*) FROM S_Cards
+ WHERE date_out IS NULL;
+ SELECT @teacher_count AS teacher_count, @student_count AS student_count;
+END
